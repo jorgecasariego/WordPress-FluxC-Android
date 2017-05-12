@@ -178,7 +178,7 @@ public class SignedOutActionsFragment extends Fragment {
         if (event.isError()) {
             prependToLog("OnUrlChecked: error");
         } else {
-            prependToLog("OnUrlChecked: " + event.url + (event.isWPCom ? " is" : " is not")
+            prependToLog("OnUrlChecked: " + event.getUrl() + (event.getIsWPCom() ? " is" : " is not")
                          + " accessible via WordPress.com API");
         }
     }
@@ -187,9 +187,9 @@ public class SignedOutActionsFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSuggestedDomains(OnSuggestedDomains event) {
         if (event.isError()) {
-            prependToLog("OnSuggestedDomains: error: " + event.error.type + " - " + event.error.message);
+            prependToLog("OnSuggestedDomains: error: " + event.error.getType() + " - " + event.error.getMessage());
         } else {
-            for (DomainSuggestionResponse suggestion : event.suggestions) {
+            for (DomainSuggestionResponse suggestion : event.getSuggestions()) {
                 prependToLog("Suggestion: " + suggestion.domain_name + " - " + suggestion.cost);
             }
         }

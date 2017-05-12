@@ -18,3 +18,4 @@ allprojects {
         configFile file("${project.rootDir}/config/checkstyle.xml")
     }
 }
+

@@ -400,8 +400,8 @@ public class SiteRestClient extends BaseWPComRestClient {
             String jsonString = new String(error.networkResponse.data);
             try {
                 JSONObject errorObj = new JSONObject(jsonString);
-                payload.error.type = NewSiteErrorType.fromString((String) errorObj.get("error"));
-                payload.error.message = (String) errorObj.get("message");
+                payload.error.setType(NewSiteErrorType.Companion.fromString((String) errorObj.get("error")));
+                payload.error.setMessage((String) errorObj.get("message"));
             } catch (JSONException e) {
                 // Do nothing (keep default error)
             }

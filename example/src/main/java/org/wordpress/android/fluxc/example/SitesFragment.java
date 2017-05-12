@@ -134,19 +134,19 @@ public class SitesFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSiteChanged(OnSiteChanged event) {
         if (event.isError()) {
-            prependToLog("SiteChanged error: " + event.error.type);
-            AppLog.e(T.TESTS, "SiteChanged error: " + event.error.type);
+            prependToLog("SiteChanged error: " + event.error.getType());
+            AppLog.e(T.TESTS, "SiteChanged error: " + event.error.getType());
         } else {
-            prependToLog("SiteChanged: rowsAffected = " + event.rowsAffected);
+            prependToLog("SiteChanged: rowsAffected = " + event.getRowsAffected());
         }
     }
 
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNewSiteCreated(OnNewSiteCreated event) {
-        String message = event.dryRun ? "validated" : "created";
+        String message = event.getDryRun() ? "validated" : "created";
         if (event.isError()) {
-            prependToLog("New site " + message + ": error: " + event.error.type + " - " + event.error.message);
+            prependToLog("New site " + message + ": error: " + event.error.getType() + " - " + event.error.getMessage());
         } else {
             prependToLog("New site " + message + ": success!");
         }
@@ -156,7 +156,7 @@ public class SitesFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSiteDeleted(OnSiteDeleted event) {
         if (event.isError()) {
-            prependToLog("Delete Site: error: " + event.error.type + " - " + event.error.message);
+            prependToLog("Delete Site: error: " + event.error.getType() + " - " + event.error.getMessage());
         } else {
             prependToLog("Delete Site: success!");
         }
@@ -166,7 +166,7 @@ public class SitesFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSiteExported(OnSiteExported event) {
         if (event.isError()) {
-            prependToLog("Export Site: error: " + event.error.type);
+            prependToLog("Export Site: error: " + event.error.getType());
         } else {
             prependToLog("Export Site: success!");
         }

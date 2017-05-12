@@ -101,7 +101,7 @@ public class MainInstafluxActivity extends AppCompatActivity {
                 mHTTPAuthManager.addHTTPAuthCredentials(username, password, url, null);
                 // Retry login action
                 if (mSelfhostedPayload != null) {
-                    signInAction(mSelfhostedPayload.username, mSelfhostedPayload.password, url);
+                    signInAction(mSelfhostedPayload.getUsername(), mSelfhostedPayload.getPassword(), url);
                 }
             }
         }, "Username", "Password", "unused");
@@ -118,8 +118,8 @@ public class MainInstafluxActivity extends AppCompatActivity {
                         mMemorizingTrustManager.storeLastFailure();
                         // Retry login action
                         if (mSelfhostedPayload != null) {
-                            signInAction(mSelfhostedPayload.username, mSelfhostedPayload.password,
-                                    mSelfhostedPayload.url);
+                            signInAction(mSelfhostedPayload.getUsername(), mSelfhostedPayload.getPassword(),
+                                    mSelfhostedPayload.getUrl());
                         }
                     }
                 }, certifString);
@@ -131,9 +131,9 @@ public class MainInstafluxActivity extends AppCompatActivity {
             wpcomFetchSites(username, password);
         } else {
             mSelfhostedPayload = new RefreshSitesXMLRPCPayload();
-            mSelfhostedPayload.url = url;
-            mSelfhostedPayload.username = username;
-            mSelfhostedPayload.password = password;
+            mSelfhostedPayload.setUrl(url);
+            mSelfhostedPayload.setUsername(username);
+            mSelfhostedPayload.setPassword(password);
 
             mDispatcher.dispatch(AuthenticationActionBuilder.newDiscoverEndpointAction(url));
         }
@@ -148,9 +148,9 @@ public class MainInstafluxActivity extends AppCompatActivity {
 
     private void selfHostedFetchSites(String username, String password, String xmlrpcEndpoint) {
         RefreshSitesXMLRPCPayload payload = new RefreshSitesXMLRPCPayload();
-        payload.username = username;
-        payload.password = password;
-        payload.url = xmlrpcEndpoint;
+        payload.setUsername(username);
+        payload.setPassword(password);
+        payload.setUrl(xmlrpcEndpoint);
         mSelfhostedPayload = payload;
         // Self Hosted don't have any "Authentication" request, try to list sites with user/password
         mDispatcher.dispatch(SiteActionBuilder.newFetchSitesXmlRpcAction(payload));
@@ -178,7 +178,7 @@ public class MainInstafluxActivity extends AppCompatActivity {
             switch (event.error.type) {
                 case HTTP_AUTH_ERROR:
                     // Show a Dialog prompting for http username and password
-                    showHTTPAuthDialog(mSelfhostedPayload.url);
+                    showHTTPAuthDialog(mSelfhostedPayload.getUrl());
                     break;
                 case INVALID_SSL_CERTIFICATE:
                     // Show a SSL Warning Dialog
@@ -199,17 +199,17 @@ public class MainInstafluxActivity extends AppCompatActivity {
     public void onDiscoveryResponse(OnDiscoveryResponse event) {
         if (event.isError()) {
             if (event.error == SelfHostedEndpointFinder.DiscoveryError.WORDPRESS_COM_SITE) {
-                wpcomFetchSites(mSelfhostedPayload.username, mSelfhostedPayload.password);
+                wpcomFetchSites(mSelfhostedPayload.getUsername(), mSelfhostedPayload.getPassword());
             } else if (event.error == SelfHostedEndpointFinder.DiscoveryError.HTTP_AUTH_REQUIRED) {
                 showHTTPAuthDialog(event.failedEndpoint);
             } else if (event.error == SelfHostedEndpointFinder.DiscoveryError.ERRONEOUS_SSL_CERTIFICATE) {
-                mSelfhostedPayload.url = event.failedEndpoint;
+                mSelfhostedPayload.setUrl(event.failedEndpoint);
                 showSSLWarningDialog(mMemorizingTrustManager.getLastFailure().toString());
             }
             AppLog.e(AppLog.T.API, "Discover error: " + event.error);
         } else {
             AppLog.i(AppLog.T.API, "Discovery succeeded, endpoint: " + event.xmlRpcEndpoint);
-            selfHostedFetchSites(mSelfhostedPayload.username, mSelfhostedPayload.password, event.xmlRpcEndpoint);
+            selfHostedFetchSites(mSelfhostedPayload.getUsername(), mSelfhostedPayload.getPassword(), event.xmlRpcEndpoint);
         }
     }
 

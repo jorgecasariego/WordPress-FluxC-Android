@@ -189,9 +189,9 @@ public class ReleaseStack_SiteTestJetpack extends ReleaseStack_Base {
 
         // Attempt to add the same Jetpack site as a self-hosted site
         RefreshSitesXMLRPCPayload xmlrpcPayload = new RefreshSitesXMLRPCPayload();
-        xmlrpcPayload.username = BuildConfig.TEST_WPORG_USERNAME_SINGLE_JETPACK_ONLY;
-        xmlrpcPayload.password = BuildConfig.TEST_WPORG_PASSWORD_SINGLE_JETPACK_ONLY;
-        xmlrpcPayload.url = BuildConfig.TEST_WPORG_URL_SINGLE_JETPACK_ONLY_ENDPOINT;
+        xmlrpcPayload.setUsername(BuildConfig.TEST_WPORG_USERNAME_SINGLE_JETPACK_ONLY);
+        xmlrpcPayload.setPassword(BuildConfig.TEST_WPORG_PASSWORD_SINGLE_JETPACK_ONLY);
+        xmlrpcPayload.setUrl(BuildConfig.TEST_WPORG_URL_SINGLE_JETPACK_ONLY_ENDPOINT);
 
         // Expect a DUPLICATE_SITE error since we're already signed into this site with Jetpack
         mNextEvent = TestEvents.ERROR_DUPLICATE_SITE;
@@ -308,11 +308,11 @@ public class ReleaseStack_SiteTestJetpack extends ReleaseStack_Base {
         AppLog.i(T.TESTS, "site count " + mSiteStore.getSitesCount());
         if (event.isError()) {
             if (mNextEvent.equals(TestEvents.ERROR_DUPLICATE_SITE)) {
-                assertEquals(SiteErrorType.DUPLICATE_SITE, event.error.type);
+                assertEquals(SiteErrorType.DUPLICATE_SITE, event.error.getType());
                 mCountDownLatch.countDown();
                 return;
             }
-            throw new AssertionError("Unexpected error occurred with type: " + event.error.type);
+            throw new AssertionError("Unexpected error occurred with type: " + event.error.getType());
         }
         assertTrue(mSiteStore.hasSite());
         assertEquals(TestEvents.SITE_CHANGED, mNextEvent);
@@ -324,7 +324,7 @@ public class ReleaseStack_SiteTestJetpack extends ReleaseStack_Base {
     public void onSiteRemoved(OnSiteRemoved event) {
         AppLog.e(T.TESTS, "site count " + mSiteStore.getSitesCount());
         if (event.isError()) {
-            throw new AssertionError("Unexpected error occurred with type: " + event.error.type);
+            throw new AssertionError("Unexpected error occurred with type: " + event.error.getType());
         }
         assertEquals(TestEvents.SITE_REMOVED, mNextEvent);
         mCountDownLatch.countDown();
@@ -360,9 +360,9 @@ public class ReleaseStack_SiteTestJetpack extends ReleaseStack_Base {
     private void fetchSitesXMLRPC(String username, String password, String endpointUrl)
             throws InterruptedException {
         RefreshSitesXMLRPCPayload payload = new RefreshSitesXMLRPCPayload();
-        payload.username = username;
-        payload.password = password;
-        payload.url = endpointUrl;
+        payload.setUsername(username);
+        payload.setPassword(password);
+        payload.setUrl(endpointUrl);
 
         mNextEvent = TestEvents.SITE_CHANGED;
         mCountDownLatch = new CountDownLatch(1);

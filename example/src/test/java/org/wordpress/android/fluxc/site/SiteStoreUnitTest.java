@@ -528,8 +528,8 @@ public class SiteStoreUnitTest {
         createOrUpdateSites.setAccessible(true);
         UpdateSitesResult res = (UpdateSitesResult) createOrUpdateSites.invoke(mSiteStore, sites);
 
-        assertTrue(res.duplicateSiteFound);
-        assertEquals(5, res.rowsAffected);
+        assertTrue(res.getDuplicateSiteFound());
+        assertEquals(5, res.getRowsAffected());
         assertEquals(5, mSiteStore.getSitesCount());
     }
 
@@ -550,8 +550,8 @@ public class SiteStoreUnitTest {
         createOrUpdateSites.setAccessible(true);
         UpdateSitesResult res = (UpdateSitesResult) createOrUpdateSites.invoke(mSiteStore, sites);
 
-        assertFalse(res.duplicateSiteFound);
-        assertEquals(5, res.rowsAffected);
+        assertFalse(res.getDuplicateSiteFound());
+        assertEquals(5, res.getRowsAffected());
         assertEquals(5, mSiteStore.getSitesCount());
     }
 
@@ -567,8 +567,8 @@ public class SiteStoreUnitTest {
         createOrUpdateSites.setAccessible(true);
         UpdateSitesResult res = (UpdateSitesResult) createOrUpdateSites.invoke(mSiteStore, sites);
 
-        assertFalse(res.duplicateSiteFound);
-        assertEquals(1, res.rowsAffected);
+        assertFalse(res.getDuplicateSiteFound());
+        assertEquals(1, res.getRowsAffected());
         assertEquals(1, mSiteStore.getSitesCount());
 
         // Insert same site with different id (considered a duplicate)
@@ -578,8 +578,8 @@ public class SiteStoreUnitTest {
         createOrUpdateSites.setAccessible(true);
         UpdateSitesResult res2 = (UpdateSitesResult) createOrUpdateSites.invoke(mSiteStore, sites2);
 
-        assertTrue(res2.duplicateSiteFound);
-        assertEquals(0, res2.rowsAffected);
+        assertTrue(res2.getDuplicateSiteFound());
+        assertEquals(0, res2.getRowsAffected());
         assertEquals(1, mSiteStore.getSitesCount());
     }
 

@@ -519,9 +519,9 @@ public class ReleaseStack_DiscoveryTest extends ReleaseStack_Base {
         mCountDownLatch = new CountDownLatch(1);
 
         RefreshSitesXMLRPCPayload payload = new RefreshSitesXMLRPCPayload();
-        payload.url = mUrl;
-        payload.username = mUsername;
-        payload.password = mPassword;
+        payload.setUrl(mUrl);
+        payload.setUsername(mUsername);
+        payload.setPassword(mPassword);
 
         mDispatcher.dispatch(SiteActionBuilder.newFetchSitesXmlRpcAction(payload));
 
@@ -537,7 +537,7 @@ public class ReleaseStack_DiscoveryTest extends ReleaseStack_Base {
     public void onSiteChanged(OnSiteChanged event) {
         AppLog.i(T.TESTS, "site count " + mSiteStore.getSitesCount());
         if (event.isError()) {
-            throw new AssertionError("Unexpected error occurred with type " + event.error.type);
+            throw new AssertionError("Unexpected error occurred with type " + event.error.getType());
         }
         assertTrue(mSiteStore.hasSite());
         assertTrue(mSiteStore.hasSiteAccessedViaXMLRPC());
@@ -550,7 +550,7 @@ public class ReleaseStack_DiscoveryTest extends ReleaseStack_Base {
     public void onSiteRemoved(OnSiteRemoved event) {
         AppLog.i(T.TESTS, "site count " + mSiteStore.getSitesCount());
         if (event.isError()) {
-            throw new AssertionError("Unexpected error occurred with type " + event.error.type);
+            throw new AssertionError("Unexpected error occurred with type " + event.error.getType());
         }
         assertFalse(mSiteStore.hasSite());
         assertFalse(mSiteStore.hasSiteAccessedViaXMLRPC());

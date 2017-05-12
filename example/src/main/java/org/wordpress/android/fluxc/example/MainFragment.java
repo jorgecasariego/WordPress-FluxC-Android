@@ -145,8 +145,8 @@ public class MainFragment extends Fragment {
                         mMemorizingTrustManager.storeLastFailure();
                         // Retry login action
                         if (mSelfhostedPayload != null) {
-                            signInAction(mSelfhostedPayload.username, mSelfhostedPayload.password,
-                                    mSelfhostedPayload.url);
+                            signInAction(mSelfhostedPayload.getUsername(), mSelfhostedPayload.getPassword(),
+                                    mSelfhostedPayload.getUrl());
                         }
                     }
                 }, certifString);
@@ -194,7 +194,7 @@ public class MainFragment extends Fragment {
                 mHTTPAuthManager.addHTTPAuthCredentials(username, password, url, null);
                 // Retry login action
                 if (mSelfhostedPayload != null) {
-                    signInAction(mSelfhostedPayload.username, mSelfhostedPayload.password, url);
+                    signInAction(mSelfhostedPayload.getUsername(), mSelfhostedPayload.getPassword(), url);
                 }
             }
         }, "Username", "Password", "unused");
@@ -210,9 +210,9 @@ public class MainFragment extends Fragment {
             wpcomFetchSites(username, password);
         } else {
             mSelfhostedPayload = new RefreshSitesXMLRPCPayload();
-            mSelfhostedPayload.url = url;
-            mSelfhostedPayload.username = username;
-            mSelfhostedPayload.password = password;
+            mSelfhostedPayload.setUrl(url);
+            mSelfhostedPayload.setUsername(username);
+            mSelfhostedPayload.setPassword(password);
 
             mDispatcher.dispatch(AuthenticationActionBuilder.newDiscoverEndpointAction(url));
         }
@@ -236,9 +236,9 @@ public class MainFragment extends Fragment {
 
     private void selfHostedFetchSites(String username, String password, String xmlrpcEndpoint) {
         RefreshSitesXMLRPCPayload payload = new RefreshSitesXMLRPCPayload();
-        payload.username = username;
-        payload.password = password;
-        payload.url = xmlrpcEndpoint;
+        payload.setUsername(username);
+        payload.setPassword(password);
+        payload.setUrl(xmlrpcEndpoint);
         mSelfhostedPayload = payload;
         // Self Hosted don't have any "Authentication" request, try to list sites with user/password
         mDispatcher.dispatch(SiteActionBuilder.newFetchSitesXmlRpcAction(payload));
@@ -278,7 +278,7 @@ public class MainFragment extends Fragment {
                     break;
                 case HTTP_AUTH_ERROR:
                     // Show a Dialog prompting for http username and password
-                    showHTTPAuthDialog(mSelfhostedPayload.url);
+                    showHTTPAuthDialog(mSelfhostedPayload.getUrl());
                     break;
                 case INVALID_SSL_CERTIFICATE:
                     // Show a SSL Warning Dialog
@@ -303,11 +303,11 @@ public class MainFragment extends Fragment {
     public void onDiscoveryResponse(OnDiscoveryResponse event) {
         if (event.isError()) {
             if (event.error == DiscoveryError.WORDPRESS_COM_SITE) {
-                wpcomFetchSites(mSelfhostedPayload.username, mSelfhostedPayload.password);
+                wpcomFetchSites(mSelfhostedPayload.getUsername(), mSelfhostedPayload.getPassword());
             } else if (event.error == DiscoveryError.HTTP_AUTH_REQUIRED) {
                 showHTTPAuthDialog(event.failedEndpoint);
             } else if (event.error == DiscoveryError.ERRONEOUS_SSL_CERTIFICATE) {
-                mSelfhostedPayload.url = event.failedEndpoint;
+                mSelfhostedPayload.setUrl(event.failedEndpoint);
                 showSSLWarningDialog(mMemorizingTrustManager.getLastFailure().toString());
             }
             prependToLog("Discovery failed with error: " + event.error);
@@ -318,7 +318,7 @@ public class MainFragment extends Fragment {
             } else {
                 prependToLog("Discovery succeeded, found XML-RPC endpoint: " + event.xmlRpcEndpoint);
             }
-            selfHostedFetchSites(mSelfhostedPayload.username, mSelfhostedPayload.password, event.xmlRpcEndpoint);
+            selfHostedFetchSites(mSelfhostedPayload.getUsername(), mSelfhostedPayload.getPassword(), event.xmlRpcEndpoint);
         }
     }
 
@@ -326,13 +326,13 @@ public class MainFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSiteChanged(OnSiteChanged event) {
         if (event.isError()) {
-            prependToLog("SiteChanged error: " + event.error.type);
+            prependToLog("SiteChanged error: " + event.error.getType());
             return;
         }
         if (mSiteStore.hasSite()) {
             SiteModel firstSite = mSiteStore.getSites().get(0);
             prependToLog("First site name: " + firstSite.getName() + " - Total sites: " + mSiteStore.getSitesCount()
-                         + " - rowsAffected: " + event.rowsAffected);
+                         + " - rowsAffected: " + event.getRowsAffected());
         }
     }
 

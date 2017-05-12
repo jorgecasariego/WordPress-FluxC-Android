@@ -85,9 +85,9 @@ public class ReleaseStack_SiteTestXMLRPC extends ReleaseStack_Base {
         mMemorizingTrustManager.clearLocalTrustStore();
 
         RefreshSitesXMLRPCPayload payload = new RefreshSitesXMLRPCPayload();
-        payload.username = BuildConfig.TEST_WPORG_USERNAME_SH_SELFSIGNED_SSL;
-        payload.password = BuildConfig.TEST_WPORG_PASSWORD_SH_SELFSIGNED_SSL;
-        payload.url = BuildConfig.TEST_WPORG_URL_SH_SELFSIGNED_SSL_ENDPOINT;
+        payload.setUsername(BuildConfig.TEST_WPORG_USERNAME_SH_SELFSIGNED_SSL);
+        payload.setPassword(BuildConfig.TEST_WPORG_PASSWORD_SH_SELFSIGNED_SSL);
+        payload.setUrl(BuildConfig.TEST_WPORG_URL_SH_SELFSIGNED_SSL_ENDPOINT);
 
         // Expecting to receive an OnAuthenticationChanged event with error INVALID_SSL_CERTIFICATE, as well as an
         // OnSiteChanged event with error GENERIC_ERROR
@@ -111,9 +111,9 @@ public class ReleaseStack_SiteTestXMLRPC extends ReleaseStack_Base {
 
     public void testXMLRPCHTTPAuthFetchSites() throws InterruptedException {
         RefreshSitesXMLRPCPayload payload = new RefreshSitesXMLRPCPayload();
-        payload.username = BuildConfig.TEST_WPORG_USERNAME_SH_HTTPAUTH;
-        payload.password = BuildConfig.TEST_WPORG_PASSWORD_SH_HTTPAUTH;
-        payload.url = BuildConfig.TEST_WPORG_URL_SH_HTTPAUTH_ENDPOINT;
+        payload.setUsername(BuildConfig.TEST_WPORG_USERNAME_SH_HTTPAUTH);
+        payload.setPassword(BuildConfig.TEST_WPORG_PASSWORD_SH_HTTPAUTH);
+        payload.setUrl(BuildConfig.TEST_WPORG_URL_SH_HTTPAUTH_ENDPOINT);
 
         // Expecting to receive an OnAuthenticationChanged event with error HTTP_AUTH_ERROR, as well as an
         // OnSiteChanged event with error GENERIC_ERROR
@@ -137,9 +137,9 @@ public class ReleaseStack_SiteTestXMLRPC extends ReleaseStack_Base {
 
     public void testXMLRPCHTTPAuthFetchSites2() throws InterruptedException {
         RefreshSitesXMLRPCPayload payload = new RefreshSitesXMLRPCPayload();
-        payload.username = BuildConfig.TEST_WPORG_USERNAME_SH_HTTPAUTH;
-        payload.password = BuildConfig.TEST_WPORG_PASSWORD_SH_HTTPAUTH;
-        payload.url = BuildConfig.TEST_WPORG_URL_SH_HTTPAUTH_ENDPOINT;
+        payload.setUsername(BuildConfig.TEST_WPORG_USERNAME_SH_HTTPAUTH);
+        payload.setPassword(BuildConfig.TEST_WPORG_PASSWORD_SH_HTTPAUTH);
+        payload.setUrl(BuildConfig.TEST_WPORG_URL_SH_HTTPAUTH_ENDPOINT);
         mNextEvent = TestEvents.SITE_CHANGED;
         // Set known HTTP Auth credentials
         mHTTPAuthManager.addHTTPAuthCredentials(BuildConfig.TEST_WPORG_HTTPAUTH_USERNAME_SH_HTTPAUTH,
@@ -211,15 +211,15 @@ public class ReleaseStack_SiteTestXMLRPC extends ReleaseStack_Base {
     public void onSiteChanged(OnSiteChanged event) {
         AppLog.i(T.TESTS, "Received OnSiteChanged, site count: " + mSiteStore.getSitesCount());
         if (event.isError()) {
-            AppLog.i(T.TESTS, "OnSiteChanged has error: " + event.error.type);
+            AppLog.i(T.TESTS, "OnSiteChanged has error: " + event.error.getType());
             if (mNextEvent.equals(TestEvents.HTTP_AUTH_ERROR)) {
                 // SiteStore reports GENERIC_ERROR when it runs into authentication errors
-                assertEquals(SiteErrorType.GENERIC_ERROR, event.error.type);
+                assertEquals(SiteErrorType.GENERIC_ERROR, event.error.getType());
             } else if (mNextEvent.equals(TestEvents.INVALID_SSL_CERTIFICATE)) {
                 // SiteStore reports GENERIC_ERROR when it runs into authentication errors
-                assertEquals(SiteErrorType.GENERIC_ERROR, event.error.type);
+                assertEquals(SiteErrorType.GENERIC_ERROR, event.error.getType());
             } else {
-                throw new AssertionError("Unexpected error occurred with type: " + event.error.type);
+                throw new AssertionError("Unexpected error occurred with type: " + event.error.getType());
             }
             mCountDownLatch.countDown();
             return;
@@ -235,7 +235,7 @@ public class ReleaseStack_SiteTestXMLRPC extends ReleaseStack_Base {
     public void onSiteRemoved(OnSiteRemoved event) {
         AppLog.i(T.TESTS, "Received OnSiteRemoved, site count: " + mSiteStore.getSitesCount());
         if (event.isError()) {
-            throw new AssertionError("Unexpected error occurred with type: " + event.error.type);
+            throw new AssertionError("Unexpected error occurred with type: " + event.error.getType());
         }
         assertFalse(mSiteStore.hasSite());
         assertFalse(mSiteStore.hasSiteAccessedViaXMLRPC());
@@ -263,7 +263,7 @@ public class ReleaseStack_SiteTestXMLRPC extends ReleaseStack_Base {
     @Subscribe
     public void onPostFormatsChanged(OnPostFormatsChanged event) {
         if (event.isError()) {
-            throw new AssertionError("Unexpected error occurred with type: " + event.error.type);
+            throw new AssertionError("Unexpected error occurred with type: " + event.error.getType());
         }
         assertEquals(TestEvents.POST_FORMATS_CHANGED, mNextEvent);
         mCountDownLatch.countDown();
@@ -271,9 +271,9 @@ public class ReleaseStack_SiteTestXMLRPC extends ReleaseStack_Base {
 
     private void fetchSites(String username, String password, String endpointUrl) throws InterruptedException {
         RefreshSitesXMLRPCPayload payload = new RefreshSitesXMLRPCPayload();
-        payload.username = username;
-        payload.password = password;
-        payload.url = endpointUrl;
+        payload.setUsername(username);
+        payload.setPassword(password);
+        payload.setUrl(endpointUrl);
 
         mNextEvent = TestEvents.SITE_CHANGED;
         mCountDownLatch = new CountDownLatch(1);
