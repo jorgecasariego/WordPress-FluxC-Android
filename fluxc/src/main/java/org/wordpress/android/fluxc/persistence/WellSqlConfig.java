@@ -194,4 +194,12 @@ public class WellSqlConfig extends DefaultWellConfig {
             db.execSQL(table.createStatement());
         }
     }
+
+    private void migrateAddOn(@AddOn String addOnName, SQLiteDatabase db, int oldDbVersion) {
+        if (mActiveAddOns.contains(addOnName)) {
+            switch (oldDbVersion) {
+                // TODO
+            }
+        }
+    }
 }
