@@ -11,10 +11,12 @@ import org.wordpress.android.fluxc.model.WCOrderModel
 import org.wordpress.android.fluxc.network.BaseRequest.BaseErrorListener
 import org.wordpress.android.fluxc.network.UserAgent
 import org.wordpress.android.fluxc.network.rest.wpcom.BaseWPComRestClient
+import org.wordpress.android.fluxc.network.rest.wpcom.WPComGsonRequest.WPComGsonNetworkError
 import org.wordpress.android.fluxc.network.rest.wpcom.auth.AccessToken
 import org.wordpress.android.fluxc.network.rest.wpcom.jetpacktunnel.JetpackTunnelGsonRequest
 import org.wordpress.android.fluxc.store.WCOrderStore
 import org.wordpress.android.fluxc.store.WCOrderStore.FetchOrdersResponsePayload
+import org.wordpress.android.fluxc.store.WCOrderStore.OrderError
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,7 +44,9 @@ class OrderRestClient @Inject constructor(appContext: Context, dispatcher: Dispa
                 },
                 BaseErrorListener { error ->
                     run {
-                        // TODO
+                        val orderError = OrderError((error as WPComGsonNetworkError).apiError, error.message)
+                        val payload = FetchOrdersResponsePayload(orderError, site)
+                        mDispatcher.dispatch(WCOrderActionBuilder.newFetchedOrdersAction(payload))
                     }
                 })
         add(request)
