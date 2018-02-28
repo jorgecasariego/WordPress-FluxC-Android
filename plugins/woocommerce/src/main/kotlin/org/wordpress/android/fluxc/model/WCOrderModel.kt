@@ -4,6 +4,8 @@ import com.yarolegovich.wellsql.core.Identifiable
 import com.yarolegovich.wellsql.core.annotation.Column
 import com.yarolegovich.wellsql.core.annotation.PrimaryKey
 import com.yarolegovich.wellsql.core.annotation.Table
+import org.wordpress.android.fluxc.model.order.OrderAddress
+import org.wordpress.android.fluxc.model.order.OrderAddress.AddressType
 import org.wordpress.android.fluxc.persistence.WellSqlConfig
 
 @Table(addOn = WellSqlConfig.ADDON_WOOCOMMERCE)
@@ -14,6 +16,7 @@ data class WCOrderModel(@PrimaryKey @Column private var id: Int = 0) : Identifia
     @Column var currency: String = ""
     @Column var dateCreated: String = "" // ISO 8601-formatted date in UTC, e.g. 1955-11-05T14:15:00Z
     @Column var total: Float = 0F
+
     @Column var billingFirstName: String = ""
     @Column var billingLastName: String = ""
     @Column var billingCompany: String = ""
@@ -50,4 +53,14 @@ data class WCOrderModel(@PrimaryKey @Column private var id: Int = 0) : Identifia
      * as the shippingX properties will be empty.
      */
     fun hasSeparateShippingDetails() = shippingCountry.isNotEmpty()
+
+    /**
+     * Returns the billing details wrapped in a [OrderAddress].
+     */
+    fun getBillingAddress() = OrderAddress(this, AddressType.BILLING)
+
+    /**
+     * Returns the shipping details wrapped in a [OrderAddress].
+     */
+    fun getShippingAddress() = OrderAddress(this, AddressType.SHIPPING)
 }
