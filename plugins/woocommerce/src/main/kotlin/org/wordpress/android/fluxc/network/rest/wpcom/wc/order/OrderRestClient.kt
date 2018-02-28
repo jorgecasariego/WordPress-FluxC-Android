@@ -58,6 +58,7 @@ class OrderRestClient @Inject constructor(appContext: Context, dispatcher: Dispa
             currency = response.currency ?: ""
             dateCreated = "${response.date_created_gmt}Z" // Store the date in UTC format
             total = response.total ?: 0F
+
             billingFirstName = response.billing?.first_name ?: ""
             billingLastName = response.billing?.last_name ?: ""
             billingCompany = response.billing?.company ?: ""
@@ -79,6 +80,8 @@ class OrderRestClient @Inject constructor(appContext: Context, dispatcher: Dispa
             shippingState = response.shipping?.state ?: ""
             shippingPostcode = response.shipping?.postcode ?: ""
             shippingCountry = response.shipping?.country ?: ""
+
+            lineItems = response.line_items.toString()
         }
     }
 }
